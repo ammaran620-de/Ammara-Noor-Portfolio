@@ -6,5 +6,6 @@ node_modules/
 
 # Ignore log files
 *.log
+
+# Ignore Python virtual environment
 venv/
-S

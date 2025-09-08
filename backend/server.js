@@ -1,42 +1,38 @@
 const express = require('express');
 const cors = require('cors');
-const { body, validationResult } = require('express-validator'); 
-const rateLimit = require('express-rate-limit'); 
-const fs = require("fs");
-const nodemailer = require("nodemailer"); 
+const { body, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+const fs = require("fs").promises; // Use promises for async file I/O
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const app = express();
 
-// ✅ Use deployment port OR fallback to local 5000
 const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
-
-// ⭐ CORS (update this with your frontend domain later)
 app.use(cors({
   origin: [
-    "http://localhost:3000",             // local frontend (React, etc.)
-    "https://your-frontend-domain.com"   // replace with Netlify/Vercel domain
+    "http://localhost:3000",
+    "https://your-frontend-domain.com"
   ],
   methods: ["GET", "POST"],
 }));
 
-// ⭐ Rate Limiter (max 5 requests/min per IP)
 const limiter = rateLimit({
-  windowMs: 60 * 1000, 
+  windowMs: 60 * 1000,
   max: 5,
   message: { error: "Too many requests. Please try again later." }
 });
 app.use(limiter);
 
-// ✅ Test route
+// Test route
 app.get('/', (req, res) => {
   res.send('✅ Backend is working online!');
 });
 
-// ✅ Contact form route
+// Contact form route
 app.post(
   '/contact',
   [
@@ -53,18 +49,18 @@ app.post(
     const { name, email, message } = req.body;
 
     try {
-      // ⭐ Save message locally (for testing)
-      const newMessage = { name, email, message, date: new Date() };
+      // ⭐ Save message locally (Async file I/O)
       let messages = [];
-      if (fs.existsSync("messages.json")) {
-        messages = JSON.parse(fs.readFileSync("messages.json"));
+      if (await fs.readFile("messages.json", "utf-8").catch(() => null)) {
+        messages = JSON.parse(await fs.readFile("messages.json", "utf-8"));
       }
+      const newMessage = { name, email, message, date: new Date().toISOString() };
       messages.push(newMessage);
-      fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
+      await fs.writeFile("messages.json", JSON.stringify(messages, null, 2));
 
-      // ⭐ Send email using nodemailer
+      // Send email using nodemailer
       const transporter = nodemailer.createTransport({
-        service: "gmail", 
+        service: "gmail",
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
@@ -72,24 +68,31 @@ app.post(
       });
 
       await transporter.sendMail({
-        from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`, // safer sender
-        replyTo: email,  // so you can reply directly to visitor
+        from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+        replyTo: email,
         to: process.env.EMAIL_USER,
         subject: `📩 New Contact Form Submission from ${name}`,
         text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+        html: `<h3>New Contact Form Submission</h3>
+               <ul>
+                   <li><strong>Name:</strong> ${name}</li>
+                   <li><strong>Email:</strong> ${email}</li>
+               </ul>
+               <p><strong>Message:</strong></p>
+               <p>${message}</p>`,
       });
 
       console.log("📧 Email sent successfully!");
-      res.json({ success: true, msg: "Message received & email sent! ✅" });
+      res.json({ success: true, message: "Message received & email sent! ✅" });
 
     } catch (err) {
       console.error("❌ Error:", err.message);
-      res.status(500).json({ error: "Server error" });
+      res.status(500).json({ error: "Server error. Please try again later." });
     }
   }
 );
 
-// ✅ Start server
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT} (or online when deployed)`);
 });

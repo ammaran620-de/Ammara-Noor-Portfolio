@@ -11,13 +11,11 @@
   "author": "Ammara Noor",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "express-rate-limit": "^8.0.1",
     "express-validator": "^7.2.1",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.6"
   },
   "devDependencies": {
