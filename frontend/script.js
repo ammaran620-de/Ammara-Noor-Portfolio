@@ -63,49 +63,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
   counters.forEach(counter => counterObserver.observe(counter));
 
-  /* =============================
-    CONTACT FORM SUBMIT (Frontend → Backend)
-  ============================== */
-  const form = document.getElementById("contact-form");
-  const formStatus = document.getElementById("form-status");
+ /* =============================
+  CONTACT FORM SUBMIT (Frontend → Backend)
+  ============================== */
+const form = document.getElementById("contact-form");
+const formStatus = document.getElementById("form-status");
 
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const formData = {
-        name: form.name.value,
-        email: form.email.value,
-        message: form.message.value,
-      };
+    const formData = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value,
+    };
 
-      formStatus.textContent = "Sending...";
-      formStatus.style.color = "#00c6ff"; // temporary color
+    formStatus.textContent = "Sending...";
+    formStatus.style.color = "#00c6ff"; // temporary color
 
-      try {
-        const res = await fetch("http://localhost:5000/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+    try {
+      const res = await fetch("https://your-backend-project.vercel.app/contact", { // <--- CHANGE THIS LINE
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          formStatus.textContent = data.message;
-          formStatus.style.color = "#16a34a"; // Success color
-          form.reset();
-        } else {
-          formStatus.textContent = data.error || "Something went wrong.";
-          formStatus.style.color = "#ef4444"; // Error color
-        }
-      } catch (err) {
-        console.error(err);
-        formStatus.textContent = "Error connecting to server. Please try again later.";
-        formStatus.style.color = "#ef4444";
-      }
-    });
-  }
+      if (res.ok) {
+        formStatus.textContent = data.message;
+        formStatus.style.color = "#16a34a"; // Success color
+        form.reset();
+      } else {
+        formStatus.textContent = data.error || "Something went wrong.";
+        formStatus.style.color = "#ef4444"; // Error color
+      }
+    } catch (err) {
+      console.error(err);
+      formStatus.textContent = "Error connecting to server. Please try again later.";
+      formStatus.style.color = "#ef4444";
+    }
+  });
+}
 
   /* =============================
     BACK TO TOP BUTTON
