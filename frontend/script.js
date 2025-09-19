@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   counters.forEach(counter => counterObserver.observe(counter));
 
- /* =============================
+/* =============================
   CONTACT FORM SUBMIT (Frontend → Backend)
   ============================== */
 const form = document.getElementById("contact-form");
@@ -83,7 +83,7 @@ if (form) {
     formStatus.style.color = "#00c6ff"; // temporary color
 
     try {
-     const res = await fetch("https://your-backend-url.vercel.app/contact", { { // <--- CHANGE THIS LINE
+     const res = await fetch("https://portfolio-fullstack-virid.vercel.app/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -106,26 +106,3 @@ if (form) {
     }
   });
 }
-
-  /* =============================
-    BACK TO TOP BUTTON
-  ============================== */
-  const backToTopBtn = document.querySelector(".back-to-top");
-
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) { // show button after 300px
-      backToTopBtn.style.opacity = 1;
-      backToTopBtn.style.pointerEvents = "auto";
-    } else {
-      backToTopBtn.style.opacity = 0;
-      backToTopBtn.style.pointerEvents = "none";
-    }
-  });
-
-  backToTopBtn.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
-});
