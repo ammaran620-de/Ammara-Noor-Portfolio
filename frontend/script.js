@@ -83,7 +83,7 @@ if (form) {
     formStatus.style.color = "#00c6ff"; // temporary color
 
     try {
-      const res = await fetch("https://your-backend-project.vercel.app/contact", { // <--- CHANGE THIS LINE
+     const res = await fetch("https://your-backend-url.vercel.app/contact", { { // <--- CHANGE THIS LINE
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
