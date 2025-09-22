@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formStatus.style.color = "#00c6ff"; // temporary color
 
       try {
-        const res = await fetch("https://portfolio-fullstack-virid.vercel.app/api/contact", {
+        const res = await fetch("https://portfolio-fullstack-79dd5wri2-ammara-noors-projects.vercel.app//api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
